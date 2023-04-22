@@ -20,6 +20,10 @@ namespace ExchangeTrafic.Controllers
             try
             {
                 var response = await _currencyService.GetRatesAndSetIntoTransactionLogs(id);
+                if (response == null)
+                {
+                    return NotFound();
+                }
                 return Ok(response);
             }
             catch (Exception ex)
