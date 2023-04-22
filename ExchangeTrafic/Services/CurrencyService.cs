@@ -16,21 +16,25 @@ namespace ExchangeTrafic.Services
 
         public async Task<ResponseRates> GetRatesAndSetIntoTransactionLogs(int id)
         {
-            var query = await _context.Options.Where(opt => opt.Id == id).FirstOrDefaultAsync();
-            string json = query.Headers;
-            JObject jsonObject = JObject.Parse(json);
-            string headerKey = jsonObject["key"].ToString(),
-                headerValue = jsonObject["value"].ToString(),
-                url = query.Url;
-
-            //var headerDictionary = new Dictionary<string, string>();
-            //headerDictionary.Add(headerKey, headerValue);
-            //headerDictionary.Add("url", query.Url.ToString());
-            //var header = headerDictionary.FirstOrDefault(x => x.Key == "apikey");
-            //var url = headerDictionary.FirstOrDefault(x => x.Key == "url").Value;
-
             try
             {
+                var query = await _context.Options.Where(opt => opt.Id == id).FirstOrDefaultAsync();
+                if (query == null)
+                {
+                    return null;
+                }
+                string json = query.Headers;
+                JObject jsonObject = JObject.Parse(json);
+                string headerKey = jsonObject["key"].ToString(),
+                    headerValue = jsonObject["value"].ToString(),
+                    url = query.Url;
+
+                //var headerDictionary = new Dictionary<string, string>();
+                //headerDictionary.Add(headerKey, headerValue);
+                //headerDictionary.Add("url", query.Url.ToString());
+                //var header = headerDictionary.FirstOrDefault(x => x.Key == "apikey");
+                //var url = headerDictionary.FirstOrDefault(x => x.Key == "url").Value;
+
                 HttpClient client = new HttpClient();
                 client.DefaultRequestHeaders.Add(headerKey, headerValue);
                 var result = await client.GetAsync(url);
@@ -59,15 +63,6 @@ namespace ExchangeTrafic.Services
             {
                 throw new Exception(ex.Message);
             }
-
-
-
         }
-
-        //        
-        //        
-        //var modelResultJson = await result.Content.ReadAsStringAsync();
-        //var res = JsonConvert.DeserializeObject<ResponseRates>(modelResultJson);
-        //        return Ok(res);
     }
 }
